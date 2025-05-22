@@ -1,0 +1,30 @@
+{
+  "name": "task-tracker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": "ts-node src/index.ts"
+  },
+  "bin": {
+    "task-cli": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bazera/task-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bazera/task-tracker/issues"
+  },
+  "homepage": "https://github.com/bazera/task-tracker#readme",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.15.20",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
