@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { executeCommand } from './commands';
+import { executeCommand } from './commands/command-registry';
 
 async function main() {
   await executeCommand();

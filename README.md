@@ -5,10 +5,11 @@ A command-line interface (CLI) tool for managing and tracking tasks efficiently.
 ## Features
 
 - Create, read, update, and delete tasks
-- Mark tasks as complete/incomplete
-- List all tasks with filtering options
+- Track task status (Todo, In Progress, Done)
+- List tasks with status filtering
 - Persistent storage of tasks
-- Simple and intuitive command-line interface
+- Type-safe implementation with TypeScript
+- Error handling with detailed feedback
 
 ## Installation
 
@@ -24,28 +25,56 @@ npm install
 
 # Build the project
 npm run build
-```
 
-## Usage
-
-After installation, you can use the following commands:
-
-```bash
-# Start the application
-npm start
-
-# For development
-npm run dev
+# Link the CLI globally (to use task-cli command)
+npm link
 ```
 
 ## Available Commands
 
 - `task-cli add <description>` - Add a new task
-- `task-cli list` - List all tasks
-- `task-cli complete <id>` - Mark a task as complete
-- `task-cli incomplete <id>` - Mark a task as incomplete
+- `task-cli update <id> <description>` - Update a task's description
 - `task-cli delete <id>` - Delete a task
-- `task-cli help` - Show help information
+- `task-cli mark-in-progress <id>` - Mark a task as in progress
+- `task-cli mark-done <id>` - Mark a task as done
+- `task-cli list [status]` - List all tasks or filter by status (todo/in-progress/done)
+
+### Examples
+
+```bash
+# Add a new task
+task-cli add "Complete the documentation"
+
+# Update a task
+task-cli update 1 "Update the documentation with examples"
+
+# Mark a task as in progress
+task-cli mark-in-progress 1
+
+# Mark a task as done
+task-cli mark-done 1
+
+# List all tasks
+task-cli list
+
+# List tasks with specific status
+task-cli list todo
+task-cli list in-progress
+task-cli list done
+
+# Delete a task
+task-cli delete 1
+```
+
+## Error Handling
+
+The CLI provides clear error messages for various scenarios:
+
+- Invalid commands
+- Invalid task IDs
+- Missing required arguments
+- Task not found
+- Invalid task status
 
 ## Development
 
@@ -60,6 +89,7 @@ This project is built with:
 - `npm run build` - Compile TypeScript to JavaScript
 - `npm start` - Run the compiled JavaScript
 - `npm run dev` - Run the TypeScript code directly using ts-node
+- `npm test` - Run the test suite
 
 ## Project Structure
 
@@ -68,6 +98,7 @@ task-tracker/
 ├── src/
 │   ├── commands.ts    # CLI command implementations
 │   ├── data.ts        # Data handling utilities
+│   ├── errors.ts      # Custom error definitions
 │   ├── index.ts       # Entry point
 │   ├── models.ts      # Type definitions
 │   └── store.ts       # Data storage management

@@ -1,10 +1,11 @@
 import { getData, saveData } from './data';
+import { TaskNotFoundError } from './errors';
 import { CreateTaskDto, Task, TaskStatus, UpdateTaskDto } from './models';
 
 function findTaskIndex(tasks: Task[], id: number): number {
   const index = tasks.findIndex((t) => t.id === id);
   if (index === -1) {
-    throw new Error('Task not found');
+    throw new TaskNotFoundError(id);
   }
   return index;
 }
