@@ -1,4 +1,4 @@
-import { Command, Task, TaskStatus } from './models';
+import { Command, TaskStatus } from './models';
 import {
   changeTaskStatus,
   createTask,
