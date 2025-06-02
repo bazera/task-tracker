@@ -1,5 +1,6 @@
 import { InvalidCommandError, InvalidInputError, TaskError } from '../errors';
 import { Command } from '../models';
+import { FileTaskRepository } from '../repository/file-task.repository';
 import {
   AddCommand,
   ListCommand,
@@ -10,13 +11,15 @@ import {
   ICommand,
 } from './commands';
 
+const taskRepository = new FileTaskRepository();
+
 const commandRegistry: Record<Command, ICommand> = {
-  [Command.Add]: new AddCommand(),
-  [Command.Update]: new UpdateCommand(),
-  [Command.Delete]: new DeleteCommand(),
-  [Command.MarkInProgress]: new MarkInProgressCommand(),
-  [Command.MarkDone]: new MarkDoneCommand(),
-  [Command.List]: new ListCommand(),
+  [Command.Add]: new AddCommand(taskRepository),
+  [Command.Update]: new UpdateCommand(taskRepository),
+  [Command.Delete]: new DeleteCommand(taskRepository),
+  [Command.MarkInProgress]: new MarkInProgressCommand(taskRepository),
+  [Command.MarkDone]: new MarkDoneCommand(taskRepository),
+  [Command.List]: new ListCommand(taskRepository),
 };
 
 export async function executeCommand() {

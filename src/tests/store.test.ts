@@ -1,13 +1,6 @@
 import { getData, saveData } from '../data';
 import { CreateTaskDto, Task, TaskStatus } from '../models';
-import {
-  changeTaskStatus,
-  createTask,
-  deleteTask,
-  getAllTasks,
-  getTasksByStatus,
-  updateTask,
-} from '../store';
+import { FileTaskRepository } from '../repository/file-task.repository';
 
 jest.mock('../data', () => ({
   getData: jest.fn(),
@@ -31,27 +24,30 @@ const mockTasks: Task[] = [
   },
 ];
 
-describe('Task Serviec', () => {
+describe('Task Service', () => {
+  let repo: FileTaskRepository;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    repo = new FileTaskRepository();
   });
-  test('getAllTasks returns all tasks', async () => {
+  it('should return all tasks', async () => {
     (getData as jest.Mock).mockResolvedValue({ tasks: mockTasks });
 
-    const tasks = await getAllTasks();
+    const tasks = await repo.getAllTasks();
 
     expect(tasks).toEqual(mockTasks);
   });
 
-  test('getTasksByStatus filters tasks by status', async () => {
+  it('should filter tasks by status', async () => {
     (getData as jest.Mock).mockResolvedValue({ tasks: mockTasks });
 
-    const result = await getTasksByStatus(TaskStatus.Todo);
+    const result = await repo.getTasksByStatus(TaskStatus.Todo);
 
     expect(result).toEqual([mockTasks[0]]);
   });
 
-  test('createTask adds a task and saves data', async () => {
+  it('should add a task', async () => {
     (getData as jest.Mock).mockResolvedValue({ tasks: [] });
 
     const dto: CreateTaskDto = {
@@ -59,7 +55,7 @@ describe('Task Serviec', () => {
       status: TaskStatus.Todo,
     };
 
-    await createTask(dto);
+    await repo.createTask(dto);
 
     expect(saveData).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -76,11 +72,11 @@ describe('Task Serviec', () => {
     );
   });
 
-  test('updateTask updates task fields and saves data', async () => {
+  it('should update a task', async () => {
     (getData as jest.Mock).mockResolvedValue({ tasks: [...mockTasks] });
 
     const dto = { description: 'Updated Task' };
-    await updateTask(1, dto);
+    await repo.updateTask(1, dto);
 
     expect(saveData).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -96,18 +92,10 @@ describe('Task Serviec', () => {
     );
   });
 
-  test('updateTask throws if task not found', async () => {
-    (getData as jest.Mock).mockResolvedValue({ tasks: [] });
-
-    await expect(updateTask(99, { description: 'X' })).rejects.toThrow(
-      'Task not found'
-    );
-  });
-
-  test('deleteTask removes task and saves data', async () => {
+  it('should delete a task', async () => {
     (getData as jest.Mock).mockResolvedValue({ tasks: [...mockTasks] });
 
-    await deleteTask(1);
+    await repo.deleteTask(1);
 
     expect(saveData).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -116,10 +104,10 @@ describe('Task Serviec', () => {
     );
   });
 
-  test('changeTaskStatus updates task status and saves data', async () => {
+  it('should change task status', async () => {
     (getData as jest.Mock).mockResolvedValue({ tasks: [...mockTasks] });
 
-    await changeTaskStatus(1, TaskStatus.Done);
+    await repo.changeTaskStatus(1, TaskStatus.Done);
 
     expect(saveData).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -135,11 +123,19 @@ describe('Task Serviec', () => {
     );
   });
 
-  test('changeTaskStatus throws if task not found', async () => {
+  it('should throw if task not found', async () => {
     (getData as jest.Mock).mockResolvedValue({ tasks: [] });
 
-    await expect(changeTaskStatus(99, TaskStatus.Todo)).rejects.toThrow(
-      'Task not found'
+    await expect(repo.updateTask(99, { description: 'X' })).rejects.toThrow(
+      `Task with id ${99} not found`
+    );
+  });
+
+  it('should throw if task not found', async () => {
+    (getData as jest.Mock).mockResolvedValue({ tasks: [] });
+
+    await expect(repo.changeTaskStatus(99, TaskStatus.Todo)).rejects.toThrow(
+      `Task with id ${99} not found`
     );
   });
 });

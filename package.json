@@ -1,15 +1,15 @@
 {
   "name": "task-tracker",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/main.js",
     "build": "tsc",
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node src/main.ts",
     "test": "jest"
   },
   "bin": {
-    "task-cli": "./dist/index.js"
+    "task-cli": "./dist/main.js"
   },
   "repository": {
     "type": "git",

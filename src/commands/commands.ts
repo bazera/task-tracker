@@ -1,13 +1,6 @@
 import { InvalidInputError, TaskError } from '../errors';
 import { TaskStatus } from '../models';
-import {
-  changeTaskStatus,
-  createTask,
-  deleteTask,
-  getAllTasks,
-  getTasksByStatus,
-  updateTask,
-} from '../store';
+import { TaskRepository } from '../repository/repository.model';
 
 export interface ICommand {
   execute: (args: string[]) => Promise<void>;
@@ -15,6 +8,8 @@ export interface ICommand {
 }
 
 abstract class BaseCommand implements ICommand {
+  constructor(protected taskRepository: TaskRepository) {}
+
   protected validateArgs(args: string[]): boolean {
     if (!this.isValidArgs(args)) {
       throw new InvalidInputError('Invalid arguments');
@@ -46,7 +41,10 @@ export class AddCommand extends BaseCommand {
     this.validateArgs(args);
 
     try {
-      await createTask({ description: args[0], status: TaskStatus.Todo });
+      await this.taskRepository.createTask({
+        description: args[0],
+        status: TaskStatus.Todo,
+      });
       console.log('Task created');
     } catch (error) {
       this.handleError(error, 'create task');
@@ -63,7 +61,9 @@ export class UpdateCommand extends BaseCommand {
     this.validateArgs(args);
 
     try {
-      await updateTask(Number(args[0]), { description: args[1] });
+      await this.taskRepository.updateTask(Number(args[0]), {
+        description: args[1],
+      });
       console.log('Task updated');
     } catch (error) {
       this.handleError(error, 'update task');
@@ -80,7 +80,7 @@ export class DeleteCommand extends BaseCommand {
     this.validateArgs(args);
 
     try {
-      await deleteTask(Number(args[0]));
+      await this.taskRepository.deleteTask(Number(args[0]));
       console.log('Task deleted');
     } catch (error) {
       this.handleError(error, 'delete task');
@@ -97,7 +97,10 @@ export class MarkInProgressCommand extends BaseCommand {
     this.validateArgs(args);
 
     try {
-      await changeTaskStatus(Number(args[0]), TaskStatus.InProgress);
+      await this.taskRepository.changeTaskStatus(
+        Number(args[0]),
+        TaskStatus.InProgress
+      );
       console.log('Task marked as in progress');
     } catch (error) {
       this.handleError(error, 'mark task as in progress');
@@ -114,7 +117,10 @@ export class MarkDoneCommand extends BaseCommand {
     this.validateArgs(args);
 
     try {
-      await changeTaskStatus(Number(args[0]), TaskStatus.Done);
+      await this.taskRepository.changeTaskStatus(
+        Number(args[0]),
+        TaskStatus.Done
+      );
       console.log('Task marked as done');
     } catch (error) {
       this.handleError(error, 'mark task as done');
@@ -148,8 +154,8 @@ export class ListCommand extends BaseCommand {
       const status = args[0] as TaskStatus;
 
       const tasks = status
-        ? await getTasksByStatus(status)
-        : await getAllTasks();
+        ? await this.taskRepository.getTasksByStatus(status)
+        : await this.taskRepository.getAllTasks();
 
       if (tasks.length === 0) {
         console.log(
