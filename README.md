@@ -127,4 +127,8 @@ Giorgi Bazerashvili
 
 If you encounter any issues or have questions, please [open an issue](https://github.com/bazera/task-tracker/issues) on GitHub.
 
+## Note
+
+This project has been done as one of the practice projects from roadmap.sh backend roadmap project
+
 https://roadmap.sh/projects/task-tracker
